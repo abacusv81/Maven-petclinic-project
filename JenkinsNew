@@ -1,0 +1,19 @@
+node('master') {
+    stage ("SCM") {
+        checkout([$class: 'GitSCM', 
+            branches: [[name: '*/master']], 
+            extensions: [], 
+            userRemoteConfigs: [[url: 'https://github.com/plusforum/Maven-petclinic-project.git']]])
+    }
+    stage("build") { 
+        sh 'mvn clean install'
+    }
+    
+    stage("push_to_repo") {
+        sh 'curl -uuser1:APe8TNpyXKCb8VLuunDCEJcab2 -T target/petclinic.war "https://ganeshpalnitkar.jfrog.io/artifactory/Helloworldapp-repo/petclinic.war"'
+    }
+    
+    stage("archive") {
+        archiveArtifacts artifacts: 'target/petclinic.war', followSymlinks: false
+    }
+}
